@@ -18,7 +18,9 @@ typedef vector<ii> vii;
 int c, n, k;
 vi a;
 vll lis_dp, klis_dp;
+vi ret;
 
+// a[i]로 시작하는 lis의 길이
 ll lis(int i) {
     if (i == n) return 1;
     ll &ret = lis_dp[i];
@@ -29,6 +31,8 @@ ll lis(int i) {
     return ret;
 }
 
+
+// a[i]가 선택된 경우에 생성 가능한 모든 lis의 개수
 ll klis(int i) {
     if (lis(i) == 1) return 1;
     ll &ret = klis_dp[i];
@@ -40,11 +44,9 @@ ll klis(int i) {
     return min(ret, INT_MAX);
 }
 
+// 사전순 k번째 lis의 원소를 구성
 void config(int i) {
-    if (lis(i) == 1) {
-        cout << '\n';
-        return;
-    }
+    ret.push_back(a[i]);
 
     vii il;
     for (int j = i + 1; j <= n; ++j)
@@ -54,12 +56,12 @@ void config(int i) {
 
     for (ii iij : il) {
         int j = iij.second;
-        if (k <= klis(j)) {
-            cout << a[j] << ' ';
+        if (klis(j) < k)
+            k -= klis(j);
+        else {
             config(j);
             break;
         }
-        k -= klis(j);
     }
 }
 
@@ -76,11 +78,14 @@ int main(void) {
         a = vi(n + 1, 0);
         lis_dp = vll(n + 1, -1);
         klis_dp = vll(n + 1, -1);
+        ret = vi();
 
         for (int i = 1; i <= n; ++i) cin >> a[i];
 
         cout << lis(0) - 1 << '\n';
         config(0);
+        for (int i = 1; i < ret.size(); ++i) cout << ret[i] << ' ';
+        cout << '\n';
     }
 
     return 0;
