@@ -31,7 +31,6 @@ ll lis(int i) {
     return ret;
 }
 
-
 // a[i]가 선택된 경우에 생성 가능한 모든 lis의 개수
 ll klis(int i) {
     if (lis(i) == 1) return 1;
