@@ -3,7 +3,6 @@
 using namespace std;
 
 int c, n, p, l;
-
 string X = "X+YF";
 string Y = "FX-Y";
 
