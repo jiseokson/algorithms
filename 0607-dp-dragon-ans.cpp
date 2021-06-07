@@ -2,25 +2,18 @@
 
 using namespace std;
 
-void dragon(string seed, int gen) {
-    if (gen == 0) {
-        cout << seed;
-        return ;
-    }
+int c, n, p, l;
 
-    for (char c : seed) {
-        if (c == 'X') dragon("X+YF", gen - 1);
-        else if (c == 'Y') dragon("FX-Y", gen - 1);
-        else cout << c;
-    }
+char dragon(string seed, int gen) {
+    //
 }
 
 int main(void) {
-    while (true) {
-        int g;
-        cin >> g;
-        dragon("FX", g);
-        cout << '\n';
+    cin >> c;
+
+    while (c--) {
+        cin >> n >> p >> l;
     }
+
     return 0;
 }
