@@ -7,20 +7,23 @@ using namespace std;
 
 typedef vector<int> vi;
 typedef vector<vi> vvi;
+typedef vector<vvi> vvvi;
 
 int c, m;
 vi E, Emod, Dmod;
-vvi dp;
+vvvi dp;
 
-int solve(int mod, int selected) {
-    if (selected == (1 << Emod.size()) - 1)
-        return mod == 0? 1: 0;
-    int &ret = dp[mod][selected];
+int solve(int i, int mod, int selected) {
+    if (i == Emod.size())
+        return mod % m == 0? 1: 0;
+
+    int &ret = dp[i][mod][selected];
     if (ret != -1) return ret;
+    
     ret = 0;
-    for (int i = 0; i < Emod.size(); ++i) {
-        if (selected & (1 << i)) continue;
-        ret = (ret + solve((2 * mod - (Emod[i] * Emod[i]) % m) % m, selected + (1 << i))) % MOD;
+    for (int j = 0; j < Emod.size(); ++j) {
+        if (selected & (1 << j)) continue;
+        ret = (ret + solve(i + 1, (m + mod - (Emod[j] * Dmod[i]) % m) % m, selected + (1 << j))) % MOD;
     }
     return ret;
 }
@@ -47,11 +50,11 @@ int main(void) {
         for (auto i = Dmod.rbegin() + 1; i != Dmod.rend(); ++i)
             *i = *(i - 1) * step % m;
 
+        dp = vvvi(Emod.size(), vvi(m, vi(1 << E.size(), -1)));
         int ans = 0;
-        dp = vvi(m, vi(1 << Emod.size(), -1));
         for (int i = 1; i < Emod.size(); ++i)
             if (E[0] > E[i])
-                ans = (ans + solve((2 * m - (Dmod[i] * Emod[i]) % m) % m, 1 << i)) % MOD;
+                ans = (ans + solve(1, (2 * m - (Emod[i] * Dmod[0]) % m) % m, 1 << i)) % MOD;
                 
         cout << ans << '\n';
     }
