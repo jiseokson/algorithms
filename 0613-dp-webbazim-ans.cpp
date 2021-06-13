@@ -22,30 +22,30 @@ string e;
 vi E, digit, digit_mod, dec_mod;
 vvvi dp;
 
-// i: 현재 선택할 인덱스
-// less: 이전까지 선택된 숫자가 최초의 E보다 작은지 여부
-// mod: 이후 선택에서의 mod m
-// check: 이전까지 선택된 숫자의 집합
 int solve(int i, bool less, int mod, int check) {
+    // i: 현재 선택할 인덱스
+    // less: 이전까지 선택된 숫자가 최초의 E보다 작은지 여부
+    // mod: 이후 선택에서의 mod m
+    // check: 이전까지 선택된 숫자의 집합
+    
     if (i == n)
-        return less && mod % m == 0? 1: 0;
+        return less && mod % m == 0;
 
     int &ret = dp[less][mod][check];
     if (ret != -1) return ret;
 
     ret = 0;
     for (int j = 0; j < n; ++j) {
-        if (check & (1 << j)) continue;
-        if (j > 0 && digit[j - 1] == digit[j] && (~check & (1 << (j - 1)))) continue;
+        if (
+            (check & (1 << j)) ||
+            j > 0 && digit[j - 1] == digit[j] && (~check & (1 << (j - 1)))
+        ) continue;
         int next_mod = (m + mod - (digit_mod[j] * dec_mod[i]) % m) % m;
         if (less)
-            ret = (ret + solve(i + 1, true, next_mod, check + (1 << j))) % MOD;
-        else {
-            if (E[i] == digit[j])
-                ret = (ret + solve(i + 1, false, next_mod, check + (1 << j))) % MOD;
-            else if (E[i] > digit[j])
-                ret = (ret + solve(i + 1, true, next_mod, check + (1 << j))) % MOD;
-        }
+            ret += solve(i + 1, true, next_mod, check + (1 << j));
+        else if (E[i] >= digit[j])
+            ret += solve(i + 1, E[i] > digit[j], next_mod, check + (1 << j));
+        ret %= MOD;
     }
     return ret;
 }
@@ -62,8 +62,7 @@ int main(void) {
         n = e.length();
 
         E = vi();
-        for (char d: e)
-            E.push_back(d - '0');
+        for (char d: e) E.push_back(d - '0');
 
         digit = vi(E.begin(), E.end());
         sort(digit.begin(), digit.end());
@@ -76,7 +75,7 @@ int main(void) {
         for (auto i = dec_mod.rbegin() + 1; i != dec_mod.rend(); ++i)
             *i = *(i - 1) * step % m;
 
-        dp = vvvi(2, vvi(m, vi(1 << E.size(), -1)));
+        dp = vvvi(2, vvi(m, vi(1 << n, -1)));
         cout << solve(0, false, 0, 0) << '\n';
     }
 
