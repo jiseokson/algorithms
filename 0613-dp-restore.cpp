@@ -6,7 +6,9 @@
 using namespace std;
 
 typedef vector<string> vs;
-typedef vector<vector<vector<int>>> vvvi;
+typedef vector<int> vi;
+typedef vector<vi> vvi;
+typedef vector<vvi> vvvi;
 
 int c, k;
 vs strs;
@@ -19,7 +21,21 @@ int min_len(string data, int last_idx, int last_len, int selected) {
     ret = LEN_MAX;
     for (int i = 0; i < k; ++i) {
         if (selected & (1 << i)) continue;
-        // Todo: compute overlap
+        int overlap = strs[i].length();
+        for (int j = 0; j < data.length(); ++j) {
+            bool ok = true;
+            for (int l = 0; j + l < min(data.length(), l + strs[i].length()); ++l) {
+                if (data[j + l] != (strs[i])[l]) {
+                    ok = false;
+                    break;
+                }
+            }
+            if (ok) {
+                overlap = data.length() - j;
+                break;
+            }
+        }
+        cout << overlap << '\n';
         if (overlap < strs[i].length()) {
             string next_data = data + strs[i].substr(overlap);
             ret = min(ret, min_len(next_data, i, next_data.length(), selected + (1 << i)));
@@ -30,6 +46,10 @@ int min_len(string data, int last_idx, int last_len, int selected) {
 }
 
 int main(void) {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+
     cin >> c;
 
     while (c--) {
