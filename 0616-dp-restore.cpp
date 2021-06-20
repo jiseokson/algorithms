@@ -11,24 +11,28 @@ int c, k;
 vs strs;
 vvi dp, ans, over_memo;
 
-void get_input() { // ok
+// True if a is sub string of b
+inline bool sub(string &a, string &b) {
+    for (int i = 0; i < b.length(); ++i)
+        if (b.substr(i, a.length()) == a)
+            return true;
+    return false;
+}
+
+void get_input() {
     cin >> k;
     strs = vs();
-    for (int i = 0; i < k; ++i) {
-        string temp;
-        cin >> temp;
-        bool ok = true;
-        for (string s: strs) {
-            for (int j = 0; j < s.length(); ++j) {
-                if (s.substr(j, temp.length()) == temp) {
-                    ok = false;
-                    break;
-                }
-            }
-            if (!ok) break;
-        }
-        if (ok) strs.push_back(temp);
-    }
+    vs temp(k);
+    for (int i = 0; i < k; ++i) cin >> temp[i];
+
+    vi super(k);
+    for (int i = 0; i < k; ++i) super[i] = i;
+    for (int i = 0; i < k; ++i)
+        for (int j = 0; j < k; ++j)
+            if (i != j && sub(temp[i], temp[j])) super[i] = j;
+
+    for (int i = 0; i < k; ++i)
+        if (super[i] == i) strs.push_back(temp[i]);
     k = strs.size();
 }
 
@@ -38,7 +42,7 @@ void init() {
     over_memo = vvi(k, vi(k, -1));
 }
 
-int over(int last, int next) { // ok
+int over(int last, int next) {
     if (last == -1) return 0;
     int &ret = over_memo[last][next];
     if (ret != -1) return ret;
@@ -56,7 +60,8 @@ int max_over(int last, int selected) {
     if (selected == (1 << k) - 1) return 0;
     int &ret = dp[last + 1][selected];
     if (ret != -1) return ret;
-    ret = 0;
+
+    ret = -1;
     for (int next = 0; next < k; ++next) {
         if (selected & (1 << next)) continue;
         int new_ret = over(last, next) + max_over(next, selected | (1 << next));
@@ -77,7 +82,6 @@ void config(int last, int selected) {
     cout << strs[next].substr(over(last, next));
     config(next, selected | (1 << next));
 }
-
 
 int main(void) {
     ios::sync_with_stdio(false);
