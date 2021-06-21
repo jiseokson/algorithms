@@ -6,20 +6,44 @@ using namespace std;
 typedef vector<int> vi;
 typedef vector<vi> vvi;
 
+vvi board;
 vi dp;
 
-bool judge(vvi &board) {
+void print_board(int turn, int t, int next) {
+    static string tab[] = {
+        "",
+        "  ",
+        "    ",
+        "      ",
+        "        ",
+        "          ",
+        "            ",
+        "              ",
+        "                ",
+        "                  "
+    };
+
     for (int i = 0; i < 3; ++i) {
-        if (board[i][0] != 0 && board[i][0] == board[i][1] && board[i][1] == board[i][2]) return true;
-        if (board[0][i] != 0 && board[0][i] == board[0][i] && board[1][i] == board[2][i]) return true;
+        cout << tab[t];
+        for (int j = 0; j < 3; ++j)
+            cout << (board[i][j] == 0? '.': (char)board[i][j]);
+        cout << '\n';
+    }
+    cout << tab[t] << "#" << t << ", turn: " << (char)turn << ", res: " << -next << "\n\n";
+}
+
+bool judge(int turn) {
+    for (int i = 0; i < 3; ++i) {
+        if (board[i][0] == turn && board[i][0] == board[i][1] && board[i][1] == board[i][2]) return true;
+        if (board[0][i] == turn && board[0][i] == board[1][i] && board[1][i] == board[2][i]) return true;
     }
     if (
-        board[0][0] != 0 && board[0][0] == board[1][1] && board[1][1] == board[2][2] ||
-        board[0][2] != 0 && board[0][2] == board[1][1] && board[1][1] == board[2][0]
+        board[0][0] == turn && board[0][0] == board[1][1] && board[1][1] == board[2][2] ||
+        board[0][2] == turn && board[0][2] == board[1][1] && board[1][1] == board[2][0]
     ) return true;
 }
 
-inline int bi(vvi &board) {
+int bi() {
     int ret = 0;
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
@@ -31,18 +55,9 @@ inline int bi(vvi &board) {
     return ret;
 }
 
-inline void print_board(vvi &board) {
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            cout << (board[i][j] == 0? '.': (char)board[i][j]);
-        }
-        cout << '\n';
-    }
-}
-
-int can_win(vvi &board, int turn) {
-    if (judge(board)) return -1;
-    int &ret = dp[bi(board)];
+int can_win(int turn, int t) {
+    if (judge('o' + 'x' - turn)) return -1;
+    int &ret = dp[bi()];
     if (ret != -2) return ret;
 
     int next = 2;
@@ -50,7 +65,8 @@ int can_win(vvi &board, int turn) {
         for (int j = 0; j < 3; ++j) {
             if (board[i][j] == 0) {
                 board[i][j] = turn;
-                next = min(next, can_win(board, 'o' + 'x' - turn));
+                next = min(next, can_win('o' + 'x' - turn, t + 1));
+                print_board(turn, t, next);
                 board[i][j] = 0;
             }
         }
@@ -60,14 +76,10 @@ int can_win(vvi &board, int turn) {
     return ret = -next;
 }
 
-inline int pow(int a, int n) {
-    if (n == 0) return 1;
-    return a * pow(a, n - 1);
-}
-
 int main(void) {
-    vvi board(3, vi(3, 0));
-    dp = vi(pow(3, 9), -2);
-    cout << can_win(board, 'x');
+    board = vvi(3, vi(3, 0));
+    dp = vi(19683, -2);
+    int res = can_win('x', 1);
+    cout << "x res: " << res << '\n';
     return 0;
 }
