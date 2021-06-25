@@ -9,27 +9,19 @@ typedef vector<int> vi;
 typedef vector<vi> vvi;
 typedef pair<int, int> ii;
 
-int c;
-vs board;
+vvi board;
 vi dp;
 
-// TODO: make blocks
-vector<ii> block[2][4] = {
-    {
-        {{}, {}, {}, {}},
-        {{}, {}, {}, {}},
-        {{}, {}, {}, {}},
-        {{}, {}, {}, {}}
-    },
-    {
-        {{}, {}, {}, {}},
-        {{}, {}, {}, {}},
-        {{}, {}, {}, {}},
-        {{}, {}, {}, {}}
-    }
+vector<ii> blocks[] = {
+    { {0, 0}, {0, 1} },
+    { {0, 0}, {1, 0} },
+    { {0, 0}, {1, 0}, {1, 1,} },
+    { {0, 0}, {1, 0}, {1, -1} },
+    { {0, 0}, {0, 1}, {1, 1} },
+    { {0, 0}, {1, 0}, {0, 1} }
 };
 
-int bi() {
+inline int bi() {
     int res = 0;
     for (int i = 0; i < 5; ++i)
         for (int j = 0; j < 5; ++j) {
@@ -43,6 +35,23 @@ inline bool in_range(int i, int j) {
     return 0 <= i && i < 5 && 0 <= j && j < 5;
 }
 
+inline bool addable(int bid, int i, int j) {
+    for (ii b: blocks[bid]) {
+        int dr = b.first, dc = b.second;
+        int br = i + dr, bc = j + dc;
+        if (!in_range(br, bc) || board[br][bc] == '#') return false;
+    }
+    return true;
+}
+
+inline void put(int bid, int i, int j, int ch) {
+    for (ii b: blocks[bid]) {
+        int dr = b.first, dc = b.second;
+        int br = i + dr, bc = j + dc;
+        board[br][bc] = ch;
+    }
+}
+
 int can_win() {
     int &res = dp[bi()];
     if (res != -2) return res;
@@ -50,45 +59,39 @@ int can_win() {
     int next = 2;
     for (int i = 0; i < 5; ++i) {
         for (int j = 0; j < 5; ++j) {
-            for (int bid = 0; bid < 2; ++bid) {
-                for (int t = 0; t < 4; ++t) {
-
-                    bool ok = true;
-                    for (ii b: block[bid][t]) { // fill
-                        int dr = b.first, dc = b.second;
-                        int br = i + dr, bc = j + dc;
-                        if (!in_range(br, bc) || board[br][bc] == '#') {
-                            ok = false;
-                            breal;
-                        }
-                    }
-
-                    if (ok) next = min(next, can_win());
-
-                    for (ii b: block[bid][t]) { // empty
-                        int dr = b.first, dc = b.second;
-                        int br = i + dr, bc = j + dc;
-                        if (in_range(br, bc)) board[br][bc] = '.';
-                    }
-
+            if (board[i][j] == '#') continue;
+            for (int bid = 0; bid < 6; ++bid) {
+                if (!addable(bid, i, j)) continue;
+                put(bid, i, j, '#');
+                int next = can_win();
+                put(bid, i, j, '.');
+                if (!next) {
+                    return res = 1;
                 }
             }
         }
     }
 
-    if (next == 2) return res = -1; // 내가 놓을수 있는 블럭이 없으면 패배
-    return res = -next;
+    return res = 0;
 }
 
 int main(void) {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+
+    int c;
     cin >> c;
 
     while (c--) {
-        board = vs(5, "     ");
+        board = vvi(5, vi(5));
         dp = vi(33554432, -2);
-        for (int i = 0; i < 5; ++i)
+        for (int i = 0; i < 5; ++i) {
+            string row;
+            cin >> row;
             for (int j = 0; j < 5; ++j)
-                cin >> board[i][j];
+                board[i][j] = row[j];
+        }
         cout << (can_win() == 1? "WINNING\n": "LOSING\n");
     }
 
