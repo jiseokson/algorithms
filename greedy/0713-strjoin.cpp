@@ -1,9 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-using namespace std;
 
+using namespace std;
 using vi = vector<int>;
+
 #define FOR(i, n) for (int i = 0; i < n; ++i)
 
 int main(void) {
