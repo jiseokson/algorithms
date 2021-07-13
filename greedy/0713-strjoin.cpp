@@ -24,7 +24,7 @@ int main(void) {
 
         int ans = 0;
         while (L.size() > 1) {
-            sort(L.begin(), L.end(), [] (int &a, int &b) -> bool { return a > b; });
+            sort(L.begin(), L.end(), greater<int>());
             int temp = 0;
             temp += L.back(); L.pop_back();
             temp += L.back(); L.pop_back();
