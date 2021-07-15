@@ -13,6 +13,7 @@ using vi = vector<int>;
 using dd = pair<double, double>;
 using vdd = vector<dd>;
 
+int n;
 vdd arr;
 
 inline double to_rad(double x, double y) { // ok
@@ -20,6 +21,23 @@ inline double to_rad(double x, double y) { // ok
     if (x == 0.0) return y > 0.0? M_PI / 2.0: M_PI / 2.0 * 3.0;
     if (x > 0.0) return y > 0.0? atan(y / x): 2 * M_PI + atan(y / x);
     return M_PI + atan(y / x);
+}
+
+int solve(double begin, double end) {
+    int cnt = 0;
+    double latest = begin;
+    double latest_cand;
+    for (dd &next: arr) {
+        if (latest < next.first) {
+            latest = latest_cand;
+            ++cnt;
+        }
+        if (latest >= end) return cnt;
+        if (latest < next.second)
+            latest_cand = next.second;
+    }
+    
+    return latest_cand >= end? cnt + 1: n + 1;
 }
 
 int main(void) {
@@ -31,45 +49,24 @@ int main(void) {
     cin >> c;
 
     while (c--) {
-        int n;
         cin >> n;
 
         arr = vdd(n);
         FOR(i, n) {
             double y, x, r;
             cin >> y >> x >> r;
-            arr[i] = {to_rad(x, y), r / 4.0};
+            arr[i] = {to_rad(x, y) - 2.0 * asin(r / 16.0), to_rad(x, y) + 2.0 * asin(r / 16.0)};
         }
-        sort(arr.begin(), arr.end(),
-            [] (dd &a, dd &b) {
-                return a.THETA - a.COVER / 2.0 < b.THETA - b.COVER / 2.0;
-            }
-        );
+        sort(arr.begin(), arr.end());
 
-        int cnt = 1;
-        int now = 0;
-        int next_cand;
-        double latest_cover = 2 * arr[0].COVER;
-        for (int next = 1; next < n; ++next) {
-            bool overed = arr[next].THETA - arr[next].COVER <= latest_cover;
-            if (!overed) {
-                latest_cover = arr[next_cand].THETA + arr[next_cand].COVER / 2.0;
-                now = next_cand;
-                ++cnt;
-            }
-
-            double temp_cover = arr[next].THETA + arr[next].COVER / 2.0;
-            if (temp_cover >= 2 * M_PI) break;
-            if (latest_cover < temp_cover)
-                next_cand = next;
-
-            // cout << now << ' ' << latest_cover << '\n';
-            // cout << next << ' ' << temp_cover << '\n';
-            // cout << '\n';
+        int ans = n + 1;
+        FOR(start, n) {
+            if (arr[start].first < 0) ans = min(ans, 1 + solve(arr[start].second, 2 * M_PI + arr[start].first));
+            else if (arr[start].second > 2 * M_PI) ans = min(ans, 1 + solve(arr[start].second - 2 * M_PI, arr[start].first));
         }
 
-        if (latest_cover >= 2 * M_PI) cout << cnt  << '\n';
-        else cout << "IMPOSSIBLE\n";
+        if (ans >= n + 1) cout << "IMPOSSIBLE\n";
+        else cout << ans << '\n';
     }
 
     return 0;
