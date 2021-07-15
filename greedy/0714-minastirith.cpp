@@ -24,20 +24,13 @@ inline double to_rad(double x, double y) { // ok
 }
 
 int solve(double begin, double end) {
-    int cnt = 0;
-    double latest = begin;
-    double latest_cand;
+    if (begin >= end) return 0;
+    double next_begin = begin;
     for (dd &next: arr) {
-        if (latest < next.first) {
-            latest = latest_cand;
-            ++cnt;
-        }
-        if (latest >= end) return cnt;
-        if (latest < next.second)
-            latest_cand = next.second;
+        if (begin < next.first) break;
+        next_begin = max(next_begin, next.second);
     }
-    
-    return latest_cand >= end? cnt + 1: n + 1;
+    return next_begin != begin? 1 + solve(next_begin, end): n + 1;
 }
 
 int main(void) {
@@ -61,8 +54,8 @@ int main(void) {
 
         int ans = n + 1;
         FOR(start, n) {
-            if (arr[start].first < 0) ans = min(ans, 1 + solve(arr[start].second, 2 * M_PI + arr[start].first));
-            else if (arr[start].second > 2 * M_PI) ans = min(ans, 1 + solve(arr[start].second - 2 * M_PI, arr[start].first));
+            if (arr[start].first <= 0) ans = min(ans, 1 + solve(arr[start].second, 2 * M_PI + arr[start].first));
+            else if (arr[start].second >= 2 * M_PI) ans = min(ans, 1 + solve(arr[start].second - 2 * M_PI, arr[start].first));
         }
 
         if (ans >= n + 1) cout << "IMPOSSIBLE\n";
