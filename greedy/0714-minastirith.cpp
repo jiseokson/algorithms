@@ -4,42 +4,22 @@
 #include <cmath>
 #include <algorithm>
 
+#define FOR(i, n) for (int i = 0; i < n; ++i)
+#define THETA first
+#define COVER second
+
 using namespace std;
 using vi = vector<int>;
 using dd = pair<double, double>;
 using vdd = vector<dd>;
 
-#define FOR(i, n) for (int i = 0; i < n; ++i)
-
-int n;
 vdd arr;
 
 inline double to_rad(double x, double y) { // ok
-    if (x == 0.0) return y > 0? M_PI / 2.0: M_PI / 2.0 * 3.0;
+    // x, y != 0, 0
+    if (x == 0.0) return y > 0.0? M_PI / 2.0: M_PI / 2.0 * 3.0;
     if (x > 0.0) return y > 0.0? atan(y / x): 2 * M_PI + atan(y / x);
     return M_PI + atan(y / x);
-}
-
-int solve(int cnt, int start, int prev, double cover) {
-    // if (!init && start <= prev)
-    if (cover >= M_PI * 2) return cnt;
-
-    vi next_cand;
-    FOR(d, n) {
-        int next = (start + d) % n;
-        double diff = abs(arr[prev].first - arr[next].first);
-        diff = min(diff, 2 * M_PI - diff);
-        if (2.0 * diff <= arr[prev].second + arr[next].second)
-            next_cand.push_back(next);
-    }
-
-    int res = n + 1;
-    for (int next: next_cand) {
-        double diff = abs(arr[prev].first - arr[next].first);
-        diff = min(diff, 2 * M_PI - diff);
-        res = min(res, solve(cnt + 1, start, prev, cover + diff + arr[next].second / 2.0));
-    }
-    return res;
 }
 
 int main(void) {
@@ -51,20 +31,45 @@ int main(void) {
     cin >> c;
 
     while (c--) {
+        int n;
         cin >> n;
 
         arr = vdd(n);
         FOR(i, n) {
-            double x, y, r;
+            double y, x, r;
             cin >> y >> x >> r;
             arr[i] = {to_rad(x, y), r / 4.0};
         }
+        sort(arr.begin(), arr.end(),
+            [] (dd &a, dd &b) {
+                return a.THETA - a.COVER / 2.0 < b.THETA - b.COVER / 2.0;
+            }
+        );
 
-        int ans = n + 1;
-        FOR(start, n)
-            ans = min(ans, solve(0, start, start, arr[start].second / 2.0));
-        if (ans == n + 1) cout << "IMPOSSIBLE\n";
-        else cout << ans << '\n';
+        int cnt = 1;
+        int now = 0;
+        int next_cand;
+        double latest_cover = 2 * arr[0].COVER;
+        for (int next = 1; next < n; ++next) {
+            bool overed = arr[next].THETA - arr[next].COVER <= latest_cover;
+            if (!overed) {
+                latest_cover = arr[next_cand].THETA + arr[next_cand].COVER / 2.0;
+                now = next_cand;
+                ++cnt;
+            }
+
+            double temp_cover = arr[next].THETA + arr[next].COVER / 2.0;
+            if (temp_cover >= 2 * M_PI) break;
+            if (latest_cover < temp_cover)
+                next_cand = next;
+
+            // cout << now << ' ' << latest_cover << '\n';
+            // cout << next << ' ' << temp_cover << '\n';
+            // cout << '\n';
+        }
+
+        if (latest_cover >= 2 * M_PI) cout << cnt  << '\n';
+        else cout << "IMPOSSIBLE\n";
     }
 
     return 0;
