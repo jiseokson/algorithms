@@ -2,56 +2,47 @@
 #include <vector>
 #include <utility>
 #include <cmath>
-#include <algorithm>
 
+#define INF 1000000000
 #define FOR(i, n) for (int i = 0; i < n; ++i)
 
 using namespace std;
-using vi = vector<int>;
-using vvi = vector<vi>;
-using vd = vector<double>;
-using vvd = vector<vd>;
 using dd = pair<double, double>;
 using vdd = vector<dd>;
+using vd = vector<double>;
+using vvd = vector<vd>;
 
 int n;
 vvd dist;
-double best;
+double best = 1000000000;
 
 void get_input() {
-    int n;
+    best = INF;
+    
     cin >> n;
-
-    dist = vvd(n, vd(n));
-    best = 1000000000;
-
-    vdd citys;
+    vdd citys(n);
     FOR(i, n) {
         double x, y;
         cin >> x >> y;
-        citys.push_back({x, y});
+        citys[i] = {x, y};
     }
 
+    dist = vvd(n, vd(n));
     FOR(i, n) {
         FOR(j, n) {
             double dx = citys[i].first - citys[j].first;
             double dy = citys[i].second - citys[j].second;
-            dist[i][j] = sqrt(dx * dx + dy * dy);
-            cout << dist[i][j] << '\n';
+            dist[i][j] = sqrt(dx * dx + dy + dy);
         }
     }
 }
 
-void tsp_bf(int visited, vi &path, int len) {
+void tsp_bf(int visited, int prev, double len) {
     if (best <= len) return;
-    if (visited == (1 << n) - 1) best = min(best, len + dist[path.back()][0]);
-
-    int prev = path.back();
+    if (visited == (1 << n) - 1) best = min<double>(best, len + dist[prev][0]);
     FOR(next, n) {
         if (visited & (1 << next)) continue;
-        path.push_back(next);
-        tsp_bf(visited | (1 << next), path, len + dist[prev][next]);
-        path.pop_back();
+        tsp_bf(visited | (1 << next), next, len + dist[prev][next]);
     }
 }
 
@@ -61,10 +52,7 @@ int main(void) {
 
     while (c--) {
         get_input();
-
-        vi path = {0};
-        tsp_bf(1, path, 0);
-
+        tsp_bf(1, 0, 0);
         cout << best << endl;
     }
 
