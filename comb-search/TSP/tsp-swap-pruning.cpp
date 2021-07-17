@@ -4,7 +4,7 @@
 #include <cmath>
 
 #define INF 1000000000
-#define FOR(i, n) for (int i = 0; i < n; ++i)
+#define FOR(i, n) for (int (i) = 0; (i) < (n); ++(i))
 
 using namespace std;
 using dd = pair<double, double>;
@@ -68,8 +68,7 @@ int main(void) {
 
     while (c--) {
         get_input();
-        cout << "FUc";
-        vi path;
+        vi path = {0};
         tsp_bf(1, path, 0);
         cout << best << endl;
     }
