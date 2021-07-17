@@ -32,7 +32,7 @@ void get_input() {
         FOR(j, n) {
             double dx = citys[i].first - citys[j].first;
             double dy = citys[i].second - citys[j].second;
-            dist[i][j] = sqrt(dx * dx + dy + dy);
+            dist[i][j] = sqrt(dx * dx + dy * dy);
         }
     }
 }
@@ -47,6 +47,9 @@ void tsp_bf(int visited, int prev, double len) {
 }
 
 int main(void) {
+    cout << fixed;
+    cout.precision(8);
+    
     int c;
     cin >> c;
 
