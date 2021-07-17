@@ -3,22 +3,20 @@
 #include <utility>
 #include <cmath>
 
-#define INF 1000000000
 #define FOR(i, n) for (int i = 0; i < n; ++i)
 
 using namespace std;
-using dd = pair<double, double>;
-using vdd = vector<dd>;
 using vd = vector<double>;
 using vvd = vector<vd>;
+using dd = pair<double, double>;
+using vdd = vector<dd>;
+
+const double INF = 1000000000;
 
 int n;
-vvd dist;
-double best = 1000000000;
+vvd dist, dp;
 
 void get_input() {
-    best = INF;
-
     cin >> n;
     vdd citys(n);
     FOR(i, n) {
@@ -32,18 +30,22 @@ void get_input() {
         FOR(j, n) {
             double dx = citys[i].first - citys[j].first;
             double dy = citys[i].second - citys[j].second;
-            dist[i][j] = sqrt(dx * dx + dy + dy);
+            dist[i][j] = sqrt(dx * dx + dy * dy);
         }
     }
 }
 
-void tsp_bf(int visited, int prev, double len) {
-    if (best <= len) return;
-    if (visited == (1 << n) - 1) best = min<double>(best, len + dist[prev][0]);
+double tsp_dp(int visited, int prev) {
+    if (visited == (1 << n) - 1) return dist[prev][0];
+    double &res = dp[visited][prev];
+    if (res != -1.0) return res;
+
+    res = INF;
     FOR(next, n) {
         if (visited & (1 << next)) continue;
-        tsp_bf(visited | (1 << next), next, len + dist[prev][next]);
+        res = min(res, dist[prev][next] + tsp_dp(visited | (1 << next), next));
     }
+    return res;
 }
 
 int main(void) {
@@ -52,8 +54,8 @@ int main(void) {
 
     while (c--) {
         get_input();
-        tsp_bf(1, 0, 0);
-        cout << best << endl;
+        dp = vvd(1 << n, vd(n, -1.0));
+        cout << tsp_dp(1, 0) << endl;
     }
 
     return 0;
