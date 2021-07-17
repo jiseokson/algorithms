@@ -14,7 +14,7 @@ using vvd = vector<vd>;
 
 int n;
 vvd dist;
-double best = 1000000000;
+double best = INF;
 
 void get_input() {
     best = INF;
@@ -49,7 +49,7 @@ void tsp_bf(int visited, int prev, double len) {
 int main(void) {
     cout << fixed;
     cout.precision(8);
-    
+
     int c;
     cin >> c;
 
