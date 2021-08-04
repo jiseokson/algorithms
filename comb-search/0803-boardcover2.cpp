@@ -46,7 +46,7 @@ bool put(int br, int bc, int turn, int ch) {
   for (ii b: blocks[turn]) {
     int nr = br + b.first;
     int nc = bc + b.second;
-    if (!(0 <= nr && nr < h && 0 <= nc && nc < w) || board[nr][nc] == '#')
+    if (!(0 <= nr && nr < h && 0 <= nc && nc < w) || board[nr][nc] == ch)
       return false;
   }
 
@@ -56,16 +56,6 @@ bool put(int br, int bc, int turn, int ch) {
     board[nr][nc] = ch;
   }
   return true;
-}
-
-void print_board() {
-  REP(i, h) {
-    REP(j, w) {
-      cout << (char)board[i][j];
-    }
-    cout << '\n';
-  }
-  cout << '\n';
 }
 
 void max_block(int i, int count, int white_space) {
@@ -81,7 +71,6 @@ void max_block(int i, int count, int white_space) {
     REP(turn, 4) {
       if (!put(br, bc, turn, '#'))
         continue;
-      print_board();
       max_block(i, count + 1, white_space - block_size);
       put(br, bc, turn, '.');
     }
