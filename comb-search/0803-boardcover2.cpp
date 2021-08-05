@@ -74,6 +74,7 @@ void max_block(int i, int count, int white_space) {
       max_block(i, count + 1, white_space - block_size);
       put(br, bc, turn, '.');
     }
+    --white_space;
   }
 }
 
