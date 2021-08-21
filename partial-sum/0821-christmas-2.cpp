@@ -19,18 +19,15 @@ int all_pair() {
 int max_pair() {
     vi dp(n + 1, -1);
     vi prev(k + 1, -1);
-
     dp[0] = 0;
-    if (psum[0] == 0) dp[0] = 1;
-    prev[psum[0]] = 0;
-
-    for (int i = 1; i < n; ++i) {
+    prev[0] = 0;
+    for (int i = 1; i <= n; ++i) {
         dp[i] = dp[i - 1];
         int loc = prev[psum[i]];
         if (loc != -1) dp[i] = max(dp[i], 1 + dp[loc]);
         prev[psum[i]] = i;
     }
-    return dp[n - 1];
+    return dp[n];
 }
 
 int main(void) {
