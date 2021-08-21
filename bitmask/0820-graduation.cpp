@@ -1,21 +1,21 @@
 #include <iostream>
 #include <cstring>
 
-#define MAX_ANS 100
+#define INF 100
 #define FOR(i, a, b) for (int i = a; i < b; ++i)
 #define REP(i, n) FOR(i, 0, n)
 
 using namespace std;
 
-int n, k, m, l;
-int subject[10];
-int pre[10];
-int ans = MAX_ANS;
+int n, k, l, m;
+int pre[10], subject[10];
+int dp[10][1 << 10];
 
 void input() {
-    ans = MAX_ANS;
-    memset(subject, 0, sizeof(subject));
     memset(pre, 0, sizeof(pre));
+    memset(subject, 0, sizeof(subject));
+    memset(dp, -1, sizeof(dp));
+
     cin >> n >> k >> m >> l;
     REP(i, n) {
         int r;
@@ -37,31 +37,23 @@ void input() {
     }
 }
 
-inline bool isPreComplete(int subset, int complete) {
-    for (int i = 0; i < n; ++i) {
-        if (!(subset & (1 << i))) continue;
-        if (pre[i] & ~complete) return false;
-    }
-    return true;
-}
+int search(int semester, int complete) {
+    if (__builtin_popcount(complete) >= k) return 0;
+    if (semester >= m) return INF;
+    int &ret = dp[semester][complete];
+    if (ret != -1) return ret;
 
-void search(int semester, int complete) {
-    if (semester >= ans)
-        return;
-    if (__builtin_popcount(complete) >= k) {
-        ans = min(ans, semester - 1);
-        return;
-    }
-    if (semester == m)
-        return;
+    ret = min(INF, search(semester + 1, complete));
 
-    for (int subset = subject[semester]; subset; subset = ((subset - 1) & subject[semester])) {
-        if (__builtin_popcount(subset) <= l && !(subset & complete) && isPreComplete(subset, complete)) {
-            complete |= subset;
-            search(semester + 1, complete);
-            complete &= ~subset;
-        }
-    }
+    int canTake = (subject[semester] & ~complete);
+    for (int s = 0; s < n; ++s)
+        if ((canTake & (1 << s)) && (pre[s] & complete) != pre[s])
+            canTake &= ~(1 << s);
+    for (int course = canTake; course; course = ((course - 1) & canTake))
+        if (__builtin_popcount(course) <= l)
+            ret = min(ret, search(semester + 1, complete | course) + 1);
+
+    return ret;
 }
 
 int main(void) {
@@ -74,7 +66,7 @@ int main(void) {
 
     while (tc--) {
         input();
-        search(0, 0);
+        int ans = search(0, 0);
         if (ans <= m) cout << ans;
         else cout << "IMPOSSIBLE";
         cout << '\n';
