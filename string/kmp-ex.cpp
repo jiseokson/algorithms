@@ -26,7 +26,7 @@ vi kmp(const string &S, const string &P) {
         if (S[i] == P[j]) {
             ++j;
             if (j == P.length()) {
-                res.push_back(i);
+                res.push_back(i - P.length() + 1);
                 j = pi[j - 1];
             }
         }
