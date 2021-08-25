@@ -48,7 +48,10 @@ int main(void) {
         int ans = 0;
         for (int i = 1; i < n + 1; ++i) {
             int first = kmpFirst(state[i] + state[i], state[i - 1]);
-            ans += (i % 2? first: (len - first) % len);
+            if (i % 2 == 0)
+                ans += kmpFirst(state[i - 1] + state[i - 1], state[i]);
+            else
+                ans += kmpFirst(state[i] + state[i], state[i - 1]);
         }
         cout << ans << '\n';
     }
