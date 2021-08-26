@@ -47,7 +47,6 @@ int main(void) {
         int len = state[0].length();
         int ans = 0;
         for (int i = 1; i < n + 1; ++i) {
-            int first = kmpFirst(state[i] + state[i], state[i - 1]);
             if (i % 2 == 0)
                 ans += kmpFirst(state[i - 1] + state[i - 1], state[i]);
             else
