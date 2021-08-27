@@ -39,12 +39,12 @@ vi getSuffixArray(string s) {
     return perm;
 }
 
-inline int commonPrefix(const string &s, const vi &sa, int a, int b) {
+inline int commonPrefix(const string &s, int a, int b) {
     const int n = s.length();
-    for (int i = 0; i < n - sa[a] && i < n - sa[b]; ++i)
-        if (s[sa[a] + i] != s[sa[b] + i])
-            return i;
-    return min(n - sa[a], n - sa[b]);
+    int i = 0;
+    while (a < n && b < n && s[a] == s[b])
+        ++a, ++b, ++i;
+    return i;
 }
 
 int main(void) {
@@ -54,7 +54,7 @@ int main(void) {
     const int n = str.length();
     int cnt = n - sa[0];
     for (int i = 1; i < n; ++i)
-        cnt += n - sa[i] - commonPrefix(str, sa, i - 1, i);
+        cnt += n - sa[i] - commonPrefix(str, sa[i - 1], sa[i]);
     cout << cnt;
     return 0;
 }
