@@ -43,6 +43,6 @@ int main(void) {
     string str;
     cin >> str;
     vi sa = getSuffixArray(str);
-    for (int i: sa) cout << i << ": " << str.substr(i) << '\n';
+    for (int i: sa) cout << str.substr(i) << '\n';
     return 0;
 }
