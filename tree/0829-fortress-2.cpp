@@ -5,6 +5,8 @@
 using namespace std;
 using vi = vector<int>;
 
+vector<Node*> nodes;
+
 struct Node {
     int x, y, r;
     vector<Node*> child;
@@ -15,15 +17,24 @@ inline int square(int a) {
 }
 
 inline bool enclose(Node *a, Node *b) {
+    // a->r >= b->r: a->r - b->r가 음수가 되는 경우가 있으므로
     return a->r >= b->r && square(a->x - b->x) + square(a->y - b->y) <= square(a->r - b->r);
 }
 
-Node *getTree(int n) {
+bool isChild(Node *parent, Node *child) {
+    if (!enclose(parent, child)) return false;
+    for (Node *n: nodes)
+        if (n != parent && n != child && enclose(parent, n) && enclose(n, child))
+            return false;
+    return true;
+}
+
+Node *getTree() {
     Node *root = new Node();
     cin >> root->x >> root->y >> root->r;
     vector<Node*> nodes(1, root);
-    
-
+    for (int i = )
+    // vector<Node*> nodes(1, root);
     // for (int i = 1; i < n; ++i) {
     //     Node *newNode = new Node();
     //     cin >> newNode->x >> newNode->y >> newNode->r;
@@ -34,7 +45,7 @@ Node *getTree(int n) {
     //     parent->child.push_back(newNode);
     //     nodes.push_back(newNode);
     // }
-    // return root;
+    return root;
 }
 
 void deleteTree(Node *tree) {
