@@ -59,6 +59,8 @@ int dp_maxsum(vi& arr) {
 
 int main(void) {
     vi arr = {-7, 4, -3, 6, 3, -8, 3, 4};
-    cout << inef_maxsum(arr);
+    cout << "inef: " << inef_maxsum(arr) << '\n';
+    cout << "dnc: " << dnc_maxsum(arr, 0, arr.size() - 1) << '\n';
+    cout << "dp: " << dp_maxsum(arr) << '\n';
     return 0;
 }
