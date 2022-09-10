@@ -83,13 +83,9 @@ void selection_sort(vi& arr) {
 }
 
 void insertion_sort(vi& arr) {
-    for (int i = 0; i < arr.size(); ++i) {
-        int j = i;
-        while (j > 0 && arr[j - 1] > arr[j]) {
+    for (int i = 0; i < arr.size(); ++i)
+        for (int j = i; j > 0 && arr[j - 1] > arr[j]; --j)
             swap(arr[j - 1], arr[j]);
-            --j;
-        }
-    }
 }
 
 int binary_search(vi& arr, int x) {
@@ -116,12 +112,14 @@ int main(void) {
 
     vi arr2 = {4, 2, 6, 7, 5, 9, 1, 3};
     selection_sort(arr2);
+    cout << "Selection sort\n";
     for (int i = 0; i < arr2.size(); ++i)
         cout << arr2[i] << ' ';
     cout << '\n';
 
     vi arr3 = {4, 2, 6, 7, 5, 9, 1, 3};
     insertion_sort(arr3);
+    cout << "Insertion sort\n";
     for (int i = 0; i < arr3.size(); ++i)
         cout << arr3[i] << ' ';
     cout << '\n';
@@ -131,7 +129,7 @@ int main(void) {
     cout << i << ' ' << arr4[i] << '\n';
 
     vi arr5 = {1, 2, 2, 4, 5, 6};
-    int j = binary_search(arr5, 3);
+    int j = binary_search(arr5, 0);
     cout << j << ' ' << arr5[j] << '\n';
 
     return 0;
