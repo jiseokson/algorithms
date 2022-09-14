@@ -68,7 +68,7 @@ vi karatsuba(const vi& a, const vi& b) {
     int an = a.size(), bn = b.size();
     if (an < bn) return karatsuba(b, a);
     if (an == 0 || bn == 0) return to_vi(0);
-    if (an <= 2) return multiply(a, b);
+    if (an <= 20) return multiply(a, b);
 
     int half = an / 2;
     vi a0 = vi(a.begin(), a.begin() + half);
@@ -97,6 +97,7 @@ int main(void) {
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<int> dis(0, 9);
+    
     for (int i = 0; i < test_case; ++i) {
         vi a, b;
         for (int j = 0; j < digit_len; ++j) {
