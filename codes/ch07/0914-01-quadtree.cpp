@@ -22,6 +22,16 @@ string reverse(int i) {
     return "x" + reverse(j3) + reverse(j4) + reverse(j1) + reverse(j2);
 }
 
+string reverse(string::iterator& i) {
+    char head = *i++;
+    if (head != 'x') return string(1, head);
+    string upper_left = reverse(i);
+    string upper_right = reverse(i);
+    string lower_left = reverse(i);
+    string lower_right = reverse(i);
+    return string("x") + lower_left + lower_right + upper_left + upper_right;
+}
+
 int main(void) {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
