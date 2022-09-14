@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <random>
 
 using namespace std;
 
@@ -66,8 +67,8 @@ vi multiply(const vi& a, const vi& b) {
 vi karatsuba(const vi& a, const vi& b) {
     int an = a.size(), bn = b.size();
     if (an < bn) return karatsuba(b, a);
-    if (an == 0 || bn == 0) return vi();
-    // if (an <= 50) return multiply(a, b);
+    if (an == 0 || bn == 0) return to_vi(0);
+    if (an <= 2) return multiply(a, b);
 
     int half = an / 2;
     vi a0 = vi(a.begin(), a.begin() + half);
@@ -91,18 +92,22 @@ vi karatsuba(const vi& a, const vi& b) {
 }
 
 int main(void) {
-    // vi a = to_vi(1342);
-    // vi b = to_vi(123);
-    // cout << "a: " << to_string(a) << '\n';
-    // cout << "b: " << to_string(b) << '\n';
-    // cout << to_string(multiply(a, b)) << '\n';
-    // cout << to_string(karatsuba(a, b)) << '\n';
-
-    vi a = to_vi(0);
-    vi b = to_vi(12);
-    add_to(a, b, 0);
-    cout << to_string(karatsuba(b, to_vi(0)));
-
+    int test_case = 10;
+    int digit_len = 50;
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<int> dis(0, 9);
+    for (int i = 0; i < test_case; ++i) {
+        vi a, b;
+        for (int j = 0; j < digit_len; ++j) {
+            a.push_back(dis(gen));
+            b.push_back(dis(gen));
+        }
+        cout << "Test case #" << i << '\n';
+        cout << "a: " << to_string(a) << '\n';
+        cout << "b: " << to_string(b) << '\n';
+        cout << "a*b: " << to_string(karatsuba(a, b)) << "\n\n";
+    }
 
     return 0;
 }
