@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <string>
 
 using namespace std;
 using vi = vector<int>;
@@ -40,7 +41,9 @@ int main(void) {
     cin >> c;
     while (c--) {
         cin >> picture;
-        cout << reverse(0) << '\n';
+        // cout << reverse(0) << '\n';
+        string::iterator i = picture.begin();
+        cout << reverse(i);
     }
 
     return 0;
