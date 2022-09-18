@@ -21,6 +21,8 @@ int lis(const vi& a) {
 }
 
 int lis_dp(int i) {
+    if (i == a.size()) return 0;
+
     int& ret = dp[i];
     if (ret != -1) return ret;
 
