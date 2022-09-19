@@ -20,11 +20,12 @@ int jlis(int i, int j) {
     if (ret != -1) return ret;
 
     ret = 1;
+    ll max_element = max(a[i], b[j]);
     for (int next_i = i + 1; next_i <= n; ++next_i)
-        if (max(a[i], b[j]) < a[next_i])
+        if (max_element < a[next_i])
             ret = max(ret, 1 + jlis(next_i, j));
     for (int next_j = j + 1; next_j <= m; ++next_j)
-        if (max(a[i], b[j]) < b[next_j])
+        if (max_element < b[next_j])
             ret = max(ret, 1 + jlis(i, next_j));
     return ret;
 }
