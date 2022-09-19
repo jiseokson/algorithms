@@ -24,6 +24,15 @@ bool is_alternately(const vi& arr) {
     for (int i = 0; i < arr.size(); ++i)
         if (arr[i] != arr[i % 2]) return false;
     return true;
+
+    // size = 5인 경우
+    // 0 <= i < 2: i = 0, 1
+    // arr[0] == arr[2], arr[1] == arr[3] 까지만 검사
+    // arr[4]는 검사안함
+    //
+    // for (int i = 0; i < arr.size() / 2; ++i)
+    //     if (arr[i] != arr[i + 2]) return false;
+    // return true;
 }
 
 bool is_monotonous(const vi& arr) {
