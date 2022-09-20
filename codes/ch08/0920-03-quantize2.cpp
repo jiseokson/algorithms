@@ -9,37 +9,27 @@ using namespace std;
 using vi = vector<int>;
 using vvi = vector<vi>;
 
-vi arr, psum;
+vi arr, psum_a, psum_a_2;
 vvi cache;
 
-// void eval_psum() {
-//     psum[0] = arr[0];
-//     for (int i = 1; i < arr.size(); ++i) {
-//         psum[i] = psum[i - 1] + arr[i];
-//     }
-// }
+void eval_psum() {
+    psum_a[0] = arr[0];
+    psum_a_2[0] = arr[0] * arr[0];
+    for (int i = 1; i < arr.size(); ++i) {
+        psum_a[i] = psum_a[i - 1] + arr[i];
+        psum_a_2[i] = psum_a_2[i - 1] + arr[i] * arr[i];
+    }
+}
 
-// int range_mean(int lo, int hi) {
-//     int n = hi - lo + 1;
-//     if (lo == 0) return int((double)psum[hi] / n + 0.5);
-//     return int((double)(psum[hi] - psum[lo - 1]) / n + 0.5);
-// }
-
-int eval_sse(int lo, int hi, int q) {
-    int ret = 0;
-    for (int i = lo; i <= hi; ++i)
-        ret += (arr[i] - q) * (arr[i] - q);
-    return ret;
+int range_sum(const vi& psum, int lo, int hi) {
+    if (lo == 0) return psum[hi];
+    return psum[hi] - psum[lo - 1];
 }
 
 int range_min_sse(int lo, int hi) {
-    int ret = INF;
-    for (int q = arr[lo]; q <= arr[hi]; ++q) {
-        ret = min(ret, eval_sse(lo, hi, q));
-    }
-    return ret;
-    // int q = range_mean(lo, hi);
-    // return eval_sse(lo, hi, q);
+    int n = hi - lo + 1;
+    int q = int((double)range_sum(psum_a, lo, hi) / n + 0.5);
+    return range_sum(psum_a_2, lo, hi) - 2 * q * range_sum(psum_a, lo, hi) + n * q * q;
 }
 
 int min_sse(int i, int s) {
@@ -68,11 +58,11 @@ int main(void) {
     while (c--) {
         cin >> n >> s;
         arr = vi(n);
-        psum = vi(n);
+        psum_a = vi(n), psum_a_2 = vi(n);
         cache = vvi(101, vi(11, -1));
         for (int i = 0; i < n; ++i) cin >> arr[i];
-        // eval_psum();
         sort(arr.begin(), arr.end());
+        eval_psum();
         cout << min_sse(0, s - 1) << '\n';
     }
     return 0;
