@@ -10,7 +10,7 @@ using vvd = vector<vd>;
 
 int n, d, p;
 vvi adj_mat;
-vi adj_cnt;
+vi deg;
 vvd cache;
 
 double prob(int d, int v)
@@ -21,7 +21,7 @@ double prob(int d, int v)
     ret = 0.0;
     for (int w = 0; w < n; ++w) {
         if (!adj_mat[v][w]) continue;
-        ret += prob(d - 1, w) / adj_cnt[w];
+        ret += prob(d - 1, w) / deg[w];
     }
     return ret;
 }
@@ -40,12 +40,12 @@ int main(void)
     while (tc--) {
         cin >> n >> d >> p;
         adj_mat = vvi(n, vi(n, 0));
-        adj_cnt = vi(n, 0);
+        deg = vi(n, 0);
         cache = vvd(d + 1, vd(n + 1, -1.0));
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j) {
                 cin >> adj_mat[i][j];
-                if (adj_mat[i][j]) ++adj_cnt[i];
+                if (adj_mat[i][j]) ++deg[i];
             }
         }
         int t;
