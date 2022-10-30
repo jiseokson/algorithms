@@ -53,9 +53,10 @@ int main(void)
         while (t--) {
             int v;
             cin >> v;
-            cout << prob(d, v) << " ";
+            cout << prob(d, v);
+            if (t) cout << " ";
         }
-        cout << "\n";
+        if (tc) cout << "\n";
     }
 
     return 0;
