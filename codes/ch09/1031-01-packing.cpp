@@ -19,23 +19,22 @@ int pack(int i, int v)
     if (ret != -1) return ret;
     ret = pack(i + 1, v);
     choice[i][v] = v;
-    int temp = p[i] + pack(i + 1, v - w[i]);
-    if (v - w[i] >= 0 && ret < temp) {
-        ret = temp;
-        choice[i][v] = v - w[i];
+    if (v - w[i] >= 0) {
+        int temp = p[i] + pack(i + 1, v - w[i]);
+        if (ret < temp) {
+            ret = temp;
+            choice[i][v] = v - w[i];
+        }
     }
     return ret;
 }
 
-int reconstruct(vs &packs, int i, int v)
+void reconstruct(vs &packs, int i, int v)
 {
-    if (i == N) return 0;
-    int ret = 0;
-    if (v != choice[i][v]) {
+    if (i == N) return;
+    if (choice[i][v] != v)
         packs.push_back(stuff[i]);
-        ++ret;
-    }
-    return ret += reconstruct(packs, i + 1, choice[i][v]);
+    reconstruct(packs, i + 1, choice[i][v]);
 }
 
 int main(void)
@@ -58,8 +57,8 @@ int main(void)
             cin >> stuff[i] >> w[i] >> p[i];
         vs packs;
         int max_p = pack(0, W);
-        int cnt = reconstruct(packs, 0, W);
-        cout << max_p << " " << cnt << "\n";
+        reconstruct(packs, 0, W);
+        cout << max_p << " " << packs.size() << "\n";
         for (int i = 0; i < packs.size(); ++i)
             cout << packs[i] << "\n";
     }
