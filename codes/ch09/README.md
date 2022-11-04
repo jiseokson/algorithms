@@ -54,3 +54,27 @@ void reconstruct(vs &packs, int i, int v)
 실제 최적화가 이루어지는 해를 재구성하는 함수 reconstruct는 각 부분문제에서 최적화가 이루어지는 선택이 기록된 choice배열을 사용하지 않도록 구현을 변경했다. 이 문제의 경우 각 부분문제에서 선택 가능한 경우의 수가 2가지뿐이므로 다음에 해결해야할 두 부분문제의 정답을 비교하는 것만으로도 현재 부분문제에서 최적화가 이뤄지는 선택을 추적할 수 있다.  
 음의 무한을 도입하여 구현이 더 간결해지기는 했지만, 짧은 시간내에 부분문제의 정의로부터 직관적으로 구현하기는 상대적으로 어려운 느낌. 이런식으로 구현하는 경우 종료조건 2가지가 존재하는데 각 종료조건을 검사하는 순서가 결과에 영향을 미치므로 논리적으로 더 정교한 검토가 필요하다.  
 보통 비정상적인 종료 조건, 정상적인 종료 조건순으로 검사를 구현한 경우가 많은것 같다.
+<br>
+
+## 02. OCR ##
+원문 S = [w1, w2, ... wn], 인식한 문장 S' = [w1', w2', ... wn']  
+P(원문이 S | 인식한 문장이 S') = P(원문이 S이고 분류기로 S') / P(인식한 문장이 S')  
+이때 인식한 문장이 S'일 확률은 고정이므로 P(원문이 S이고 분류기로 S')를 최대화하는 문제로 생각하자.  
+P(원문이 S이고 분류기로 S') = P(원문이 w1이고 인식결과가 w1') * ... * P(원문이 wn이고 인식결과가 wn')  
+```C++
+double max_prob(int prev_wi, int i) // 이전 단어가 prev_wi일때 확률이 최대화되는 i번째 단어 결정
+{
+    if (i == n) return 1.0;
+    double& ret = cache[prev_wi][i];
+    if (ret != -1) return ret;
+
+    for (int cur_wi = 1; cur_wi <= wc; ++cur_wi) {
+        double temp = T[prev_wi][cur_wi] * M[cur_wi][clf[i]] * max_prob(cur_wi, i + 1);
+        if (ret < temp) {
+            choice[prev_wi][i] = cur_wi;
+            ret = temp;
+        }
+    }
+    return ret;
+}
+```
