@@ -19,7 +19,7 @@ int main(void)
             if (isLaser) {
                 lcs.pop();
                 lcs.push(1);
-                isLaser = false;
+                isLaser = false;   
             } else {
                 int nc = 0;
                 while (lcs.top() != 0) {
